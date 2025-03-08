@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["nanodjango", 'django-colorfield', 'ipdb', "openai", "dotenv"]
+# dependencies = ["nanodjango", 'ipdb', "openai", "dotenv"]
 # ///
 
 import base64
@@ -19,6 +19,7 @@ api_key = os.getenv('OPENAI_KEY')
 client = OpenAI(api_key = api_key)
 default_prompt = "Please transcribe these handwritten notes into text?"
 
+# app = Django(EXTRA_APPS=['django_q',])
 app = Django()
 
 @register.filter
@@ -72,7 +73,7 @@ class Translation(models.Model):
         if self.submitted:
             return f"RESULTS {self.results}"
         return f"UNSUBMITTED"
-    
+
 @app.route("/", name="index")
 def index(request):
     items = Item.objects.filter(active=True).order_by("description")
@@ -80,7 +81,6 @@ def index(request):
         "items": items,
     }
     return render(request, "index.html", context)
-
 
 @app.route("/item/<int:item_id>", name="item_detail")
 def item_detail(request, item_id):
