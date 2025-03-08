@@ -60,6 +60,9 @@ class Record(models.Model):
     def __str__(self):
         return f"{self.created}: {self.pdf_file}"
 
+    class Meta:
+        ordering = ['-created']
+
 @app.admin
 class Translation(models.Model):
     record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
@@ -76,15 +79,15 @@ class Translation(models.Model):
 
 @app.route("/", name="index")
 def index(request):
-    items = Item.objects.filter(active=True).order_by("description")
+    records = Record.objects.all()
     context = {
-        "items": items,
+        "records": records,
     }
     return render(request, "index.html", context)
 
-@app.route("/item/<int:item_id>", name="item_detail")
-def item_detail(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
+@app.route("/record/<int:record_id>", name="record_detail")
+def item_detail(request, record_id):
+    item = get_object_or_404(Record, pk=record_id)
     context = {
         "item": item,
     }

@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Title{% endblock title %}
+{% block title %}Records List{% endblock title %}
 
 {% block content %}
 
+<section>
+<h1>Records List</h1>
+</section>
+
 <ul>
-  {% for item in items %}
-    <li><a href="{% url 'item_detail' item.id %}">{{ item }}</a></li>
+  {% for record in records %}
+    <li><a href="{% url 'record_detail' record.id %}">{{ record }}</a></li>
   {% endfor %}
 </ul>
 
