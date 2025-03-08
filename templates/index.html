@@ -10,7 +10,7 @@
 
 <ul>
   {% for record in records %}
-    <li><a href="{% url 'record_detail' record.id %}">{{ record }}</a></li>
+    <li><a href="{% url 'record' record.id %}">{{ record }}</a></li>
   {% endfor %}
 </ul>
 

@@ -4,10 +4,11 @@
 
 {% block content %}
 
-<div>{{ item }}</div>
-<div>{{ item.category }}</div>
-<div>{{ item.number }}</div>
-<div>{{ item.double_number }}</div>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Record</button>
+</form>
 
 
 <a hef="{% url 'index' %}">Back to index page</a>

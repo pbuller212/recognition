@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["nanodjango", 'ipdb', "openai", "dotenv"]
+# dependencies = ["nanodjango", 'ipdb', "openai", "dotenv", "Pillow"]
 # ///
 
 import base64
@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from nanodjango import Django
 from django.shortcuts import render, get_object_or_404
 from django.db import models
+from django import forms
 from django.utils import timezone
 from django.template.defaulttags import register
 from dotenv import load_dotenv
@@ -57,6 +58,7 @@ class Record(models.Model):
     pdf_file = models.FileField(upload_to='uploads/', null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     def __str__(self):
         return f"{self.created}: {self.pdf_file}"
 
@@ -85,14 +87,28 @@ def index(request):
     }
     return render(request, "index.html", context)
 
-@app.route("/record/<int:record_id>", name="record_detail")
-def item_detail(request, record_id):
-    item = get_object_or_404(Record, pk=record_id)
-    context = {
-        "item": item,
-    }
-    return render(request, "item.html", context)
+@app.route("/record/<int:record_id>", name="record")
+def record(request, record_id=None):
+    if record_id is not None:
+        record = get_object_or_404(Record, pk=record_id)
 
+    if request.method == "POST":
+        form = RecordModelForm(request.POST, request.FILES, instance=record)
+        if form.is_valid():
+            form.save()
+    else:
+        form = RecordModelForm(instance=record)
+    context = {
+        "record": record,
+        "form": form,
+    }
+    return render(request, "record.html", context)
+
+class RecordModelForm(forms.ModelForm):
+    class Meta:
+        model = Record
+        fields = '__all__' # Includes all fields from the model
+        # exclude = ['field_to_exclude'] # Excludes specific fields
 
 if __name__ == "__main__":
     app.run()
