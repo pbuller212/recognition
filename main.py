@@ -1,19 +1,23 @@
 # /// script
-# dependencies = ["nanodjango", 'django-colorfield', 'ipdb', "openai"]
+# dependencies = ["nanodjango", 'django-colorfield', 'ipdb', "openai", "dotenv"]
 # ///
 
+import base64
+from openai import OpenAI
 from datetime import datetime, timedelta
 from nanodjango import Django
 from django.shortcuts import render, get_object_or_404
 from django.db import models
 from django.utils import timezone
 from django.template.defaulttags import register
+from dotenv import load_dotenv
+import os
 
-app = Django(
-    EXTRA_APPS=[
-        "colorfield",
-    ]
-)
+
+load_dotenv()
+api_key = os.getenv('OPENAI_KEY')
+
+app = Django()
 
 # Needs to be imported after instantiating the app object or will cause settings error
 from colorfield.fields import ColorField
