@@ -16,12 +16,10 @@ import os
 
 load_dotenv()
 api_key = os.getenv('OPENAI_KEY')
+client = OpenAI(api_key = api_key)
+default_prompt = "Please transcribe these handwritten notes into text?"
 
 app = Django()
-
-# Needs to be imported after instantiating the app object or will cause settings error
-from colorfield.fields import ColorField
-
 
 @register.filter
 def get_item(dictionary, key):
@@ -45,7 +43,6 @@ class Item(models.Model):
     category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE, null=True)
     active = models.BooleanField(default=True)
     number = models.IntegerField(default=0, null=True)
-    display_color = ColorField(default="#FFFFFF")
 
     def __str__(self):
         return f"{self.category.description}, {self.description}"
@@ -54,7 +51,28 @@ class Item(models.Model):
     def double_number(self):
         return self.number * 2
 
+@app.admin
+class Record(models.Model):
+    pdf_file = models.FileField(upload_to='uploads/', null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f"{self.created}: {self.pdf_file}"
 
+@app.admin
+class Translation(models.Model):
+    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
+    prompt = models.TextField(default=default_prompt, null=True, blank=True)
+    results = models.TextField(default="Not yet translated.", null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    submitted = models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.submitted:
+            return f"RESULTS {self.results}"
+        return f"UNSUBMITTED"
+    
 @app.route("/", name="index")
 def index(request):
     items = Item.objects.filter(active=True).order_by("description")
