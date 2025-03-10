@@ -1,16 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ item.description }}{% endblock title %}
+{% block title %}{{ record.description }}{% endblock title %}
 
 {% block content %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Record</button>
-</form>
+<table>
+    <tr>
+        <td>Created:</td>
+        <td>{{ record.created }}</td>
+    </tr>
+    <tr>
+        <td>Updated:</td>
+        <td>{{ record.updated }}</td>
+    </tr>
+    <tr>
+        <td>Uploaded File:</td>
+        <td><a href="{{ record.pdf_file.url }}">{{ record.pdf_file.name }}</a></td>
+    </tr>
+    <tr>
+        <td>Converted Image:</td>
+        {% if record.image %}
+        <td><a href="{{ record.image.url }}">{{ record.image.name }}</a></td>
+        {% else %}
+        <td>No converted yet, click to convert</td>
+        {% endif %}
+        
+    </tr>
+</table>
 
 
+
+
+<hr/>
 <a hef="{% url 'index' %}">Back to index page</a>
 
 {% endblock content %}

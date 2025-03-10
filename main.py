@@ -92,15 +92,15 @@ def record(request, record_id=None):
     if record_id is not None:
         record = get_object_or_404(Record, pk=record_id)
 
-    if request.method == "POST":
-        form = RecordModelForm(request.POST, request.FILES, instance=record)
-        if form.is_valid():
-            form.save()
-    else:
-        form = RecordModelForm(instance=record)
+    # if request.method == "POST":
+    #     form = RecordModelForm(request.POST, request.FILES, instance=record)
+    #     if form.is_valid():
+    #         form.save()
+    # else:
+    #     form = RecordModelForm(instance=record)
     context = {
         "record": record,
-        "form": form,
+        # "form": form,
     }
     return render(request, "record.html", context)
 
