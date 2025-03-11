@@ -31,29 +31,6 @@ def get_item(dictionary, key):
     val = dictionary.get(key)
     return val if val is not None else ""
 
-
-@app.admin
-class ItemCategory(models.Model):
-    description = models.CharField(default="", null=True, blank=True, max_length=50)
-
-    def __str__(self):
-        return f"{self.description}"
-
-
-@app.admin
-class Item(models.Model):
-    description = models.CharField(default="", null=True, blank=True, max_length=50)
-    category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE, null=True)
-    active = models.BooleanField(default=True)
-    number = models.IntegerField(default=0, null=True)
-
-    def __str__(self):
-        return f"{self.category.description}, {self.description}"
-
-    @property
-    def double_number(self):
-        return self.number * 2
-
 @app.admin
 class Record(models.Model):
     pdf_file = models.FileField(upload_to='uploads/', null=True, blank=True)
