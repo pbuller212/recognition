@@ -38,14 +38,16 @@ class Record(models.Model):
     updated = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     def __str__(self):
-        return f"{self.created}: {self.pdf_file}"
+        if self.image:
+            return f"Converted: {self.image}"
+        return f"Not converted: {self.pdf_file}"
 
     class Meta:
         ordering = ['-created']
 
 @app.admin
 class Translation(models.Model):
-    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True)
+    record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True, related_name="translations")
     prompt = models.TextField(default=default_prompt, null=True, blank=True)
     results = models.TextField(default="Not yet translated.", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -69,8 +71,11 @@ def index(request):
 def record(request, record_id=None):
     if record_id is not None:
         record = get_object_or_404(Record, pk=record_id)
+        translations = record.translations.all()
     context = {
         "record": record,
+        "translations": translations,
+        "default_prompt": default_prompt,
     }
     return render(request, "record.html", context)
 

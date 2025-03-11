@@ -27,7 +27,25 @@
         
     </tr>
 </table>
-
+<hr />
+<table>
+    <tr>
+        <td>Prompt</td>
+        <td>Results</td>
+    </tr>
+    {% for result in translations %}
+    <tr>
+        <td>{{ result.prompt }}</td>
+        <td>{{ result.result }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<hr />
+<Form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <textarea name="prompt" rows="10" cols="50">{{ default_prompt }}</textarea> <br/>
+    <input type="submit" value="Submit to ChatGPT" />
+</Form>
 <hr />
 <div>
 <a href="{% url 'index' %}">Back to records list.</a> <br/>
