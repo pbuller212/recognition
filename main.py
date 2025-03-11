@@ -1,19 +1,20 @@
 # /// script
-# dependencies = ["nanodjango", 'ipdb', "openai", "dotenv", "Pillow"]
+# dependencies = ["nanodjango", 'ipdb', "openai", "dotenv", "Pillow", "pdf2image"]
 # ///
 
 import base64
 from openai import OpenAI
 from datetime import datetime, timedelta
 from nanodjango import Django
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db import models
 from django import forms
 from django.utils import timezone
 from django.template.defaulttags import register
+from django.core.files import File
 from dotenv import load_dotenv
 import os
-
+from pdf2image import convert_from_path, convert_from_bytes
 
 load_dotenv()
 api_key = os.getenv('OPENAI_KEY')
@@ -91,18 +92,22 @@ def index(request):
 def record(request, record_id=None):
     if record_id is not None:
         record = get_object_or_404(Record, pk=record_id)
-
-    # if request.method == "POST":
-    #     form = RecordModelForm(request.POST, request.FILES, instance=record)
-    #     if form.is_valid():
-    #         form.save()
-    # else:
-    #     form = RecordModelForm(instance=record)
     context = {
         "record": record,
-        # "form": form,
     }
     return render(request, "record.html", context)
+
+@app.route("/convert/<int:record_id>", name="convert")
+def record(request, record_id):
+    record = get_object_or_404(Record, pk=record_id)
+    images = convert_from_path(record.pdf_file.path, fmt="png")
+    image_path = 'media/temp_image.png'
+    images[0].save(image_path)
+    with open(image_path, 'rb') as img_file:
+        record.image.save(f"image_{record.pk}.png", File(img_file), save=False)
+        record.save()
+    
+    return redirect("record", record_id=record_id)
 
 class RecordModelForm(forms.ModelForm):
     class Meta:

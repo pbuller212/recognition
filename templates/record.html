@@ -22,7 +22,7 @@
         {% if record.image %}
         <td><a href="{{ record.image.url }}">{{ record.image.name }}</a></td>
         {% else %}
-        <td>No converted yet, click to convert</td>
+        <td>Not converted yet, click to <a href="{% url 'convert' record.id %}">convert</a></td>
         {% endif %}
         
     </tr>
