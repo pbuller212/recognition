@@ -49,7 +49,7 @@ def openai_request(record, prompt):
             }
         ],
     )
-    t = Translation.objects.create(record=record, prompt=prompt, results=response.choices[0])
+    t = Translation.objects.create(record=record, prompt=prompt, submitted=True, raw_results=response.choices[0])
     t.save()
     return t
 
@@ -78,7 +78,7 @@ class Record(models.Model):
 class Translation(models.Model):
     record = models.ForeignKey(Record, on_delete=models.CASCADE, null=True, related_name="translations")
     prompt = models.TextField(default=default_prompt, null=True, blank=True)
-    results = models.TextField(default="Not yet translated.", null=True, blank=True)
+    raw_results = models.TextField(default="Not yet translated.", null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     submitted = models.BooleanField(default=False)
