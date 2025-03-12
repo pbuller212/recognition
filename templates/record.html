@@ -36,7 +36,7 @@
     {% for result in translations %}
     <tr>
         <td>{{ result.prompt }}</td>
-        <td>{{ result.raw_results }}</td>
+        <td onclick="window.location.href='{% url 'result_detail' result.id %}'" style="cursor: pointer;">{{ result.raw_results }}</td>
     </tr>
     {% endfor %}
 </table>

@@ -51,7 +51,6 @@ def openai_request(record, prompt):
     )
     raw_results = response.choices[0].message.content
     t = Translation.objects.create(record=record, prompt=prompt, submitted=True, raw_results=raw_results)
-    print(raw_results)
     t.save()
     return t
 
@@ -128,11 +127,13 @@ def record(request, record_id):
     
     return redirect("record", record_id=record_id)
 
-class RecordModelForm(forms.ModelForm):
-    class Meta:
-        model = Record
-        fields = '__all__' # Includes all fields from the model
-        # exclude = ['field_to_exclude'] # Excludes specific fields
+@app.route("/result/<int:record_id>", name="result_detail")
+def result(request, record_id):
+    translation = get_object_or_404(Translation, pk=record_id)
+    context = {
+        "data": translation.raw_results,
+    }
+    return redirect("index")
 
 if __name__ == "__main__":
     app.run()
