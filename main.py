@@ -49,7 +49,9 @@ def openai_request(record, prompt):
             }
         ],
     )
-    t = Translation.objects.create(record=record, prompt=prompt, submitted=True, raw_results=response.choices[0])
+    raw_results = response.choices[0].message.content
+    t = Translation.objects.create(record=record, prompt=prompt, submitted=True, raw_results=raw_results)
+    print(raw_results)
     t.save()
     return t
 
@@ -85,7 +87,7 @@ class Translation(models.Model):
 
     def __str__(self):
         if self.submitted:
-            return f"RESULTS {self.results}"
+            return f"RESULTS {self.raw_results}"
         return f"UNSUBMITTED"
 
 @app.route("/", name="index")
