@@ -124,7 +124,6 @@ def record(request, record_id):
     with open(image_path, 'rb') as img_file:
         record.image.save(f"image_{record.pk}.png", File(img_file), save=False)
         record.save()
-    
     return redirect("record", record_id=record_id)
 
 @app.route("/result/<int:record_id>", name="result_detail")
@@ -133,7 +132,8 @@ def result(request, record_id):
     context = {
         "data": translation.raw_results,
     }
-    return redirect("index")
+    return render(request, "result.html", context)
+
 
 if __name__ == "__main__":
     app.run()

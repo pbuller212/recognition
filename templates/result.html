@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ record.description }}{% endblock title %}
+
+{% block content %}
+
+<div>
+    <pre id="data">{{ data }}</pre>
+    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+</div>
+<script>
+    function copyToClipboard() {
+        var copyText = document.getElementById("data").innerText;
+        navigator.clipboard.writeText(copyText).then(function() {
+            alert("Copied to clipboard");
+        }, function(err) {
+            alert("Failed to copy text: ", err);
+        });
+    }
+</script>
+
+{% endblock content %}
